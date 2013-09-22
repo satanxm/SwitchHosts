@@ -110,3 +110,5 @@ class HostsCtrl(stc.StyledTextCtrl):
 
         #        self.SetReadOnly(True)
 
+    def GetValue(self):
+        return self.GetText()

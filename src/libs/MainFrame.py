@@ -244,6 +244,8 @@ class MainFrame(ui.Frame):
                 pass
             self.addHosts(hosts)
 
+        self.getOnlineList()
+
     def setHostsDir(self):
         pass
 
@@ -643,7 +645,7 @@ class MainFrame(ui.Frame):
 
     def updateConfigs(self, configs):
 
-        keys = ("hostses",)
+        keys = ("hostses", "remotehosts")
         for k in keys:
             if k in configs:
                 self.configs[k] = configs[k]
@@ -772,21 +774,9 @@ class MainFrame(ui.Frame):
                 return
 
         if not hosts:
-            # 新建 hosts
-            fn = self.makeNewHostsFileName()
-            if not fn:
-                wx.MessageBox(u"hosts 文件数超出限制，无法再创建新 hosts 了！", caption=u"出错啦！")
+            hosts = self.saveNewHostFile(title, url, is_online)
+            if not hosts:
                 return
-
-            path = os.path.join(self.hosts_path, fn)
-
-            hosts = Hosts(path, title=title, url=url if is_online else None)
-            hosts.content = u"# %s" % title
-
-            if hosts.is_online:
-                self.getHostsContent(hosts)
-
-            self.addHosts(hosts, show_after_add=True)
 
         else:
             # 修改 hosts
@@ -796,6 +786,44 @@ class MainFrame(ui.Frame):
             self.updateHostsTitle(hosts)
 
         self.saveHosts(hosts)
+
+    # 新建 hosts
+    def saveNewHostFile(self, title,  url, is_online, fn = "" ):
+        if not fn:
+            fn = self.makeNewHostsFileName()
+
+        if not fn:
+            wx.MessageBox(u"hosts 文件数超出限制，无法再创建新 hosts 了！", caption=u"出错啦！")
+            return
+
+        path = os.path.join(self.hosts_path, fn)
+
+        hosts = Hosts(path, title=title, url=url if is_online else None)
+        hosts.content = u"# %s" % title
+
+        if hosts.is_online:
+            self.getHostsContent(hosts)
+
+        self.addHosts(hosts, show_after_add=True)
+        return hosts
+
+    def getOnlineList(self):
+        import urllib2
+        url = str(self.configs.get('remotehosts'))
+        print  "remote url:" + url
+        try:
+            hostliststr = urllib2.urlopen(url, None, 5).read()
+            if hostliststr:
+                hostlist = json.loads(hostliststr)
+                for hostcnf in hostlist:
+                    title = hostcnf['title']
+                    url = hostcnf['url']
+                    self.saveNewHostFile(title, url, True, str(hostcnf["name"]) + "_onlinehosts" )
+
+        except:
+            print url + ',timeout'
+
+
 
     def getHostsContent(self, hosts):
 

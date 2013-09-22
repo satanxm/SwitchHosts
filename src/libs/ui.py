@@ -186,7 +186,7 @@ class Frame(wx.Frame):
 
         bSizer6.Add(bSizer7, 0, wx.EXPAND, 5)
 
-        bSizer4.Add(bSizer6, 5, wx.EXPAND, 5)
+        bSizer4.Add(bSizer6, 3, wx.EXPAND, 5)
 
         self.m_panel1.SetSizer(bSizer4)
         self.m_panel1.Layout()
@@ -221,7 +221,7 @@ class Frame(wx.Frame):
             pos=wx.DefaultPosition,
             size=wx.DefaultSize,
             style=wx.TE_MULTILINE|wx.TE_RICH2|wx.TE_PROCESS_TAB|wx.HSCROLL|wx.NO_BORDER)
-        txt_ctrl.SetMaxLength(0)
+        #txt_ctrl.SetMaxLength(0)
 
         container.Add(txt_ctrl, 1, wx.ALL | wx.EXPAND, 0)
 

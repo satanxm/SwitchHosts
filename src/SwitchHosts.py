@@ -37,6 +37,7 @@ class SwitchHostsApp(object):
 
         while True:
 
+            #app = wx.App(True, "log.log")
             app = wx.App(False)
 
             instance_name = "%s-%s" % (app.GetAppName(), wx.GetUserId())
