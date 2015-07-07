@@ -130,6 +130,8 @@ class MainFrame(ui.Frame):
         if not os.path.isdir(self.hosts_path):
             os.makedirs(self.hosts_path)
 
+        self.setDnsInstantUpdate()
+
     def initBind(self):
         u"""初始化时绑定事件"""
 
@@ -172,6 +174,24 @@ class MainFrame(ui.Frame):
 
         for t in self.back_threads:
             t.stop()
+
+    def setDnsInstantUpdate(self):
+        import _winreg
+        try:
+            key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER,r"Software\Microsoft\Windows\CurrentVersion\Internet Settings",0, _winreg.KEY_ALL_ACCESS)
+
+            currentTimeout = _winreg.QueryValueEx(key, "DnsCacheTimeout")
+            print(currentTimeout)
+
+            if(currentTimeout[0] != 1):
+                _winreg.SetValueEx(key,"DnsCacheTimeout", 0, _winreg.REG_DWORD, 1)
+            # _winreg.SetValue(key,"DnsCacheTimeout",_winreg.REG_SZ, "4")
+
+            currentSvrTimeout = _winreg.QueryValueEx(key, "ServerInfoTimeOut")
+            if(currentSvrTimeout[0] != 1):
+                _winreg.SetValueEx(key,"ServerInfoTimeOut", 0, _winreg.REG_DWORD, 1)
+        except :
+            print "some thing wrong with set dns cache Time"
 
     def makeHostsContextMenu(self):
 
