@@ -176,8 +176,8 @@ class MainFrame(ui.Frame):
             t.stop()
 
     def setDnsInstantUpdate(self):
-        import _winreg
         try:
+            import _winreg
             key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER,r"Software\Microsoft\Windows\CurrentVersion\Internet Settings",0, _winreg.KEY_ALL_ACCESS)
 
             currentTimeout = _winreg.QueryValueEx(key, "DnsCacheTimeout")
